@@ -7,7 +7,6 @@ class SpaceObject:
         self.position = position
         self.velocity = [0,0,0]
 
-        self.orbit_steps = []
     def __repr__(self):
         return 'pos: {}, \tvel: {}'.format(self.position, self.velocity)
 
@@ -34,19 +33,53 @@ def fast_forward(moons, steps=1):
 def energy(moon):
     return sum(list(map(abs, moon.position))) * sum(list(map(abs, moon.velocity)))
 
-def orbit(moons):
-    while True:
-        moons = [moon.apply_gravity(moons) for moon in moons]
-        moons = [moon.simulate() for moon in moons]
+def orbits(moons):
+    xs, ys, zs = {},{},{}
+    it = 0
+    orbitx, orbity, orbitz = None, None, None
+    while not (orbitx and orbity and orbitz):
+        x = str([(m.position[0], m.velocity[0]) for m in moons])
+        y = str([(m.position[1], m.velocity[1]) for m in moons])
+        z = str([(m.position[2], m.velocity[2]) for m in moons])
 
+        if not orbitx and x in xs:
+            orbitx = it - xs[x]
+        else: xs[x] = it
+
+        if not orbity and y in ys:
+            orbity = it - ys[y]
+        else: ys[y] = it
+
+        if not orbitz and z in zs:
+            orbitz = it - zs[z]
+        else: zs[z] = it
+
+        moons = fast_forward(moons, 1)
+        it += 1
+
+    return orbitx, orbity, orbitz
+
+def equals(x, y, z):
+    a, b, longest = tuple(sorted([x, y, z]))
+
+    ref = longest
+    while True:
+        if not ref % a and not ref % b: break
+        ref += longest
+
+    return ref
 
 if __name__ == '__main__':
     positions = parse('input.txt')
-    moons = [SpaceObject(pos) for pos in positions]
+    moons = [SpaceObject(list(pos)) for pos in positions]
 
     moons = fast_forward(moons, 1000)
     part1 = sum(list(map(energy, moons)))
 
     print('Part 1: {}'.format(part1))
-#    print('Part 2: {}'.format(part2))
 
+    moons = [SpaceObject(list(pos)) for pos in positions]
+    x, y, z = orbits(moons)
+    part2 = equals(x,y,z)
+
+    print('Part 2: {}'.format(part2))
