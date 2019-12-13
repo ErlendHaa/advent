@@ -1,3 +1,5 @@
+from os import system
+from sys import stdout
 from collections import deque
 
 import numpy as np
@@ -101,8 +103,6 @@ class computer:
         self.base += self.program[c]
         self.ip += 2
 
-def blocks(a):
-    return len([x for x in a[2::3] if x == 2])
 
 EMPTY  = 0
 WALL   = 1
@@ -114,76 +114,105 @@ STAY  = 0
 LEFT  = -1
 RIGHT = 1
 
+def blocks(a):
+    n = 0
+    for line in a:
+        for item in line:
+            if item != BLOCK: continue
+            n += 1
+    return n
+
 def find(a, what=BALL):
-    index = [i for i,x in enumerate(a[2::3]) if x == what]
-    return index[-1] - 2, index[-1] - 1
+    for x, line in enumerate(a):
+        for y, item in enumerate(line):
+            if item != what: continue
+            return  y, x
 
-def score(a):
-    for index, x in enumerate(a[0::3]):
-        if x != -1:           continue
-        if a[index + 1] != 0: continue
-        return a[index + 2]
+def score(a, points=0):
+    for x, y, item in zip(a[0::3], a[1::3], a[2::3]):
+        if x == -1 and y == 0: return item
+    return points
 
-def creategrid(a):
+def empty(a):
     sizex = max([x for x in a[0::3]]) + 1
     sizey = max([x for x in a[1::3]]) + 1
 
     grid = np.zeros(sizex * sizey)
-    grid = np.reshape(grid, (sizex, sizey))
+    grid = np.reshape(grid, (sizey, sizex))
     return grid
 
-def updategrid(grid, a):
-    #print(grid)
-    #print('x: {}'.format([x for x in a[0::3]]))
-    #print('y: {}'.format([x for x in a[1::3]]))
-    #print(grid.shape)
-    for index, (x, y) in enumerate(zip(a[0::3], a[1::3])):
-        item = a[index + 2]
+def update(grid, a):
+    for x, y, item in zip(a[0::3], a[1::3], a[2::3]):
 
-        if   item == EMPTY:  grid[x, y] = EMPTY
-        elif item == WALL:   grid[x, y] = WALL
-        elif item == BLOCK:  grid[x, y] = BLOCK
-        elif item == BALL:   grid[x, y] = BALL
-        elif item == PADDLE: grid[x, y] = PADDLE
+        if   item == WALL:   grid[y][x] = WALL
+        elif item == BLOCK:  grid[y][x] = BLOCK
+        elif item == BALL:   grid[y][x] = BALL
+        elif item == PADDLE: grid[y][x] = PADDLE
+        else:                grid[y][x] = EMPTY
 
     return grid
 
+def plot(grid, points):
+    system('clear')
+    output = []
+    for line in grid:
+        for item in line:
+            if   item == EMPTY:  output.append(' ')
+            elif item == WALL:   output.append('#')
+            elif item == BLOCK:  output.append('*')
+            elif item == BALL:   output.append('0')
+            elif item == PADDLE: output.append('=')
+            output.append(' ')
+        output.append('\n')
+    output.append('\n')
+    output.append('Points: {}\n'.format(points))
+    stdout.write(''.join(output))
 
 def play(comp):
     joystick = STAY
     comp.inputs.append(joystick)
     comp.run()
-    grid = creategrid(comp.outputs)
 
-    while blocks(comp.outputs):
-        paddle, _ = find(comp.outputs, PADDLE)
-        ball,   _ = find(comp.outputs, BALL)
+    grid = update(empty(comp.outputs), comp.outputs)
 
-        if   ball == paddle: joystick = STAY
-        elif ball <  paddle: joystick = LEFT
-        elif ball >  paddle: joystick = RIGHT
+    points = score(comp.outputs, 0)
+    comp.outputs = []
+    plot(grid, points)
+    while blocks(grid) > 0:
+        paddle = find(grid, PADDLE)
+        ball   = find(grid, BALL)
+
+        if ball[1] >= paddle[1]: break
+
+        if   ball[0] == paddle[0]: joystick = STAY
+        elif ball[0] <  paddle[0]: joystick = LEFT
+        elif ball[0] >  paddle[0]: joystick = RIGHT
         else: pass
 
-
-        comp.outputs = []
         comp.inputs.append(joystick)
         comp.run()
 
-        print('Ball: {}, Paddle: {}, blocks: {}'.format(ball, paddle, blocks(comp.outputs)))
-    return score(comp.outputs)
+        points = score(comp.outputs, points)
+
+        grid = update(grid, comp.outputs)
+        plot(grid, points)
+
+        comp.outputs = []
+
+    return score(comp.outputs, points)
 
 if __name__ == '__main__':
     intcodes = parse('input.txt')
 
     comp1 = computer('arcade', intcodes, []).run()
-    part1 = blocks(comp1.outputs)
-    print('Part 1: {}'.format(part1))
+    grid = update(empty(comp1.outputs), comp1.outputs)
 
-    grid = creategrid(comp1.outputs)
-    grid = updategrid(grid, comp1.outputs)
-    print(grid)
+    part1 = blocks(grid)
 
     intcodes[0] = 2
     comp2 = computer('arcade', intcodes, [])
+
     part2 = play(comp2)
+
+    print('Part 1: {}'.format(part1))
     print('Part 2: {}'.format(part2))
