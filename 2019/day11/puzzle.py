@@ -17,6 +17,7 @@ class computer:
         self.base    = 0
         self.outputs = []
         self.inputs  = deque(inputs)
+        self.paused = True
 
         ext = [0] * 1000000
         self.program.extend(ext)
@@ -104,8 +105,8 @@ class computer:
         self.base += self.program[c]
         self.ip += 2
 
-BLACK=1
-WHITE=0
+BLACK=0
+WHITE=1
 
 LEFT =0
 RIGHT=1
@@ -123,72 +124,61 @@ roadrules = {
     (RIGHT, RIGHT) : DOWN,
 }
 
-def move(turn, curpos, curdir):
+def move(turn, x, y, curdir):
     newdir = roadrules[(curdir, turn)]
 
-    curpos = list(curpos)
-    if   newdir == LEFT:  curpos[0] -= 1
-    elif newdir == RIGHT: curpos[0] += 1
-    elif newdir == UP:    curpos[1] += 1
-    elif newdir == DOWN:  curpos[1] += 1
+    if   newdir == LEFT:  x -= 1
+    elif newdir == RIGHT: x += 1
+    elif newdir == UP:    y -= 1
+    elif newdir == DOWN:  y += 1
 
-    return tuple(curpos), newdir
+    return x, y, newdir
 
-def draw(area, pos, direction):
+def draw(area):
     out = []
-    for x, line in enumerate(area):
+
+    area = area[:40,:6]
+    for x, line in enumerate(area.T):
         for y, point in enumerate(line):
-            if x == pos[0] and y == pos[1]:
-                if direction == UP: out.append('^')
-                if direction == DOWN: out.append('v')
-                if direction == RIGHT: out.append('>')
-                if direction == LEFT: out.append('<')
-            elif point == WHITE: out.append(' ')
-            elif point == BLACK: out.append('#')
-            out.append(' ')
+            if   point == WHITE: out.append('#')
+            elif point == BLACK: out.append(' ')
         out.append('\n')
     out.append('\n')
-
-    system('clear')
     print(''.join(out))
 
-def empty(x=30, y=50):
-    area = np.reshape(np.zeros(x*y), (x,y))
-    area[0]  = np.ones(y)
-    area[-1] = np.ones(y)
-    area[:, 0] = 1
-    area[:,-1] = 1
-    return area
+def paint(com, start_on=BLACK):
+    x, y = 0,0
+    facing = UP
 
-def paint(com):
-    cur_pos   = (10,5)
-    cur_dir   = UP
-    cur_color = BLACK
-    painted = defaultdict(lambda:BLACK)
-    area = empty()
-    com.paused = True
+    painted = set()
+    area = np.reshape(np.zeros(10000), (100, 100))
+
+    area[x,y] = start_on
     while com.paused:
+        cur_color = area[x][y]
+
         com.inputs.append(cur_color)
         com.run()
-
-        draw(area, cur_pos, cur_dir)
 
         paint_color, turn = com.outputs[-2:]
 
         if paint_color != cur_color:
-            painted[cur_pos] = paint_color
-            area[cur_pos[0]][cur_pos[1]] = paint_color
+            painted.add((x,y))
+            area[x, y] = paint_color
 
-        cur_pos, cur_dir = move(turn, cur_pos, cur_dir)
+        x, y, facing = move(turn, x, y, facing)
 
-        if cur_pos in painted: cur_color = painted[cur_pos]
-        else:                  cur_color = BLACK
-        sleep(1)
-    return painted
+    return len(painted), area
 
 if __name__ == '__main__':
     intcodes = parse('input.txt')
-    com = computer('painter', intcodes, [BLACK])
+    com = computer('painter', intcodes, [])
 
-    area = paint(com)
-    print('Part 1: {}'.format(len(area)))
+    painted, _ = paint(com)
+
+    com = computer('painter', intcodes, [])
+    _, area = paint(com, start_on=WHITE)
+
+    print('Part 1: {}'.format(painted))
+    print('Part 2:')
+    draw(area)
