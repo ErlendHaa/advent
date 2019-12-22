@@ -2,10 +2,12 @@ from itertools import product
 
 def parse(path):
     with open(path, mode='r') as f:
-        return [int(x) for x in f.readline().split(',')]
+        return list(map(int, f.readline().split(',')))
 
-def run(program):
+def run(program, noun, verb):
     ip = 0;
+    program[1] = noun
+    program[2] = verb
 
     while True:
         value = program[ip]
@@ -31,26 +33,14 @@ def mul(program, cur):
 
     program[idx3] = program[idx1] * program[idx2]
 
-def restore(program, noun, verb):
-    instance = list(program)
-    instance[1] = noun
-    instance[2] = verb
-    return instance
-
-def part2(intcodes, combinations):
-    for x, y in combinations:
-        program = restore(intcodes, x, y)
-        if run(program)[0] != 19690720: continue
-        return (100 * x) + y;
+def part2(intcodes):
+    for noun, verb in product(range(100), range(100)):
+        if run(list(intcodes), noun, verb)[0] != 19690720: continue
+        return (100 * noun) + verb;
 
 if __name__ == '__main__':
     intcodes = parse('input.txt')
 
-    program = restore(intcodes, 12, 2)
-    part1   = run(program)
-
-    combi = itertools.product(range(100), range(100))
-    part2 = part2(intcodes, combi)
-
+    part1 = run(list(intcodes), noun=12, verb=2)
     print('Part 1: {}'.format(part1[0]))
-    print('Part 2: {}'.format(part2))
+    print('Part 2: {}'.format(part2(intcodes)))
