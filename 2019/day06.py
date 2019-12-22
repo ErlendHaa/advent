@@ -58,7 +58,7 @@ def distance(start, end):
     return len(p1.symmetric_difference(p2)) - 2
 
 if __name__ == '__main__':
-    pairs   = parse('input.txt')
+    pairs   = parse('inputs/day06.txt')
     planets = mkuniverse(pairs)
 
     part1 = sum([p.orbits for p in planets.values()])

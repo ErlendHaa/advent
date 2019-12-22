@@ -171,7 +171,7 @@ def paint(com, start_on=BLACK):
     return len(painted), area
 
 if __name__ == '__main__':
-    intcodes = parse('input.txt')
+    intcodes = parse('inputs/day11.txt')
     com = computer('painter', intcodes, [])
 
     painted, _ = paint(com)

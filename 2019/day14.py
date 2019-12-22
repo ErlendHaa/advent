@@ -71,7 +71,7 @@ def parse(fpath):
     return chems
 
 if __name__ == '__main__':
-    chems = parse('input.txt')
+    chems = parse('inputs/day14.txt')
 
     chems['FUEL'].get(1)
     print('Part 1: {}'.format(chems['ORE'].used))

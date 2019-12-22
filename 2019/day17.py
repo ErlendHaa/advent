@@ -218,7 +218,7 @@ def ascii_seq(a):
     return a
 
 if __name__ == '__main__':
-    intcodes = parse('input.txt')
+    intcodes = parse('inputs/day17.txt')
     com = computer('ascii', intcodes).run()
 
     area = [str(chr(x)) for x in com.outputs]

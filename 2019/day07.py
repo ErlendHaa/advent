@@ -133,7 +133,7 @@ def part2(program, init=0):
     return max(outputs)
 
 if __name__ == '__main__':
-    program = parse('input.txt')
+    program = parse('inputs/day07.txt')
 
     print('Part 1: {}'.format(part1(program)))
     print('Part 2: {}'.format(part2(program)))

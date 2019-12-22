@@ -39,7 +39,7 @@ def part2(intcodes):
         return (100 * noun) + verb;
 
 if __name__ == '__main__':
-    intcodes = parse('input.txt')
+    intcodes = parse('inputs/day02.txt')
 
     part1 = run(list(intcodes), noun=12, verb=2)
     print('Part 1: {}'.format(part1[0]))

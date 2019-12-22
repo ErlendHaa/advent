@@ -18,7 +18,7 @@ def totalfuel(initial_mass):
     return fuel
 
 if __name__ == '__main__':
-    masses = parse('input.txt')
+    masses = parse('inputs/day01.txt')
 
     print('Part 1: {}'.format(sum(map(mass2fuel, masses))))
     print('Part 2: {}'.format(sum(map(totalfuel, masses))))

@@ -70,7 +70,7 @@ def equals(x, y, z):
     return ref
 
 if __name__ == '__main__':
-    positions = parse('input.txt')
+    positions = parse('inputs/day12.txt')
     moons = [SpaceObject(list(pos)) for pos in positions]
 
     moons = fast_forward(moons, 1000)

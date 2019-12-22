@@ -44,7 +44,7 @@ def wraprad(rad, shift=-1*pi/2, start=0, end=2*pi):
     return rad
 
 if __name__ == '__main__':
-    astroides = parse('input.txt')
+    astroides = parse('inputs/day10.txt')
     angles(astroides)
     station =  max(astroides, key=lambda x: len(x.space))
 

@@ -1,6 +1,8 @@
-import logging
+from os import system
+from sys import stdout
 from collections import deque
-from itertools import product
+
+import numpy as np
 
 def parse(path):
     with open(path, mode='r') as f:
@@ -14,26 +16,15 @@ class computer:
         self.base    = 0
         self.outputs = []
         self.inputs  = deque(inputs)
-        self.running = False
 
-        ext = [0] * 1000
-        self.program.extend(ext)
-
-    def reset(self, program, inputs):
-        self.program = list(program)
-        self.ip      = 0
-        self.base    = 0
-        self.outputs = []
-        self.inputs  = deque(inputs)
-        self.running = False
-        ext = [0] * 1000
+        ext = [0] * 1000000
         self.program.extend(ext)
 
     def run(self):
-        self.running = True
-        opcode       = None
+        self.paused = False
+        opcode      = None
 
-        while opcode != 99 and self.running:
+        while opcode != 99 and not self.paused:
             opcode, c, b, a = self.instruction()
             if   opcode == 1: self.add(c, b, a)
             elif opcode == 2: self.mul(c, b, a)
@@ -80,7 +71,7 @@ class computer:
 
     def put(self, c):
         if len(self.inputs) == 0:
-            self.running = False
+            self.paused = True
             return
 
         self.program[c] = self.inputs.popleft()
@@ -112,42 +103,116 @@ class computer:
         self.base += self.program[c]
         self.ip += 2
 
-def part1(tape):
-    points = []
-    com = computer('beam', tape, [])
-    for x, y in product(range(50), repeat=2):
-        com.reset(tape, [x, y])
-        com.run()
-        points.append(com.outputs[0])
 
-    return len([x for x in points if x == 1])
+EMPTY  = 0
+WALL   = 1
+BLOCK  = 2
+PADDLE = 3
+BALL   = 4
 
-def inbeam(com, tape, x, y):
-    com.reset(tape, [x, y])
-    com.run()
-    return com.outputs[0]
+STAY  = 0
+LEFT  = -1
+RIGHT = 1
 
-def part2(tape):
-    com = computer('beam', tape, [])
+def blocks(a):
+    n = 0
+    for line in a:
+        for item in line:
+            if item != BLOCK: continue
+            n += 1
+    return n
 
-    # Cone is wierd near origin, so start at y = 49, and search for
-    # corresponding x-coordinate that makes up the upper-most edge for the cone
-    x, y =  100, 49
-    while not inbeam(com, tape, x, y): x -= 1
+def find(a, what=BALL):
+    for x, line in enumerate(a):
+        for y, item in enumerate(line):
+            if item != what: continue
+            return  y, x
 
-    # For each y-row, find the x that puts you on the upper-most edge of the
-    # cone. Place your upper-right corner for the 100x100 square here. Then, if
-    # the upper-left and lower-left corners of the square is also inside the
-    # cone, the square will be in the cone.
-    while not (inbeam(com, tape, x-99, y) and inbeam(com, tape, x - 99, y + 99)):
-        y += 1
-        while inbeam(com, tape, x, y): x += 1
-        x -= 1
+def score(a, points=0):
+    for x, y, item in zip(a[0::3], a[1::3], a[2::3]):
+        if x == -1 and y == 0: return item
+    return points
 
-    return 10000 * (x - 99) + y
+def empty(a):
+    sizex = max([x for x in a[0::3]]) + 1
+    sizey = max([x for x in a[1::3]]) + 1
+
+    grid = np.zeros(sizex * sizey)
+    grid = np.reshape(grid, (sizey, sizex))
+    return grid
+
+def update(grid, a):
+    for x, y, item in zip(a[0::3], a[1::3], a[2::3]):
+
+        if   item == WALL:   grid[y][x] = WALL
+        elif item == BLOCK:  grid[y][x] = BLOCK
+        elif item == BALL:   grid[y][x] = BALL
+        elif item == PADDLE: grid[y][x] = PADDLE
+        else:                grid[y][x] = EMPTY
+
+    return grid
+
+def plot(grid, points):
+    system('clear')
+    output = []
+    for line in grid:
+        for item in line:
+            if   item == EMPTY:  output.append(' ')
+            elif item == WALL:   output.append('#')
+            elif item == BLOCK:  output.append('*')
+            elif item == BALL:   output.append('0')
+            elif item == PADDLE: output.append('=')
+            output.append(' ')
+        output.append('\n')
+    output.append('\n')
+    output.append('Points: {}\n'.format(points))
+    stdout.write(''.join(output))
+
+def play(comp):
+    joystick = STAY
+    comp.inputs.append(joystick)
+    comp.run()
+
+    grid = update(empty(comp.outputs), comp.outputs)
+
+    points = score(comp.outputs, 0)
+    comp.outputs = []
+    plot(grid, points)
+    while blocks(grid) > 0:
+        paddle = find(grid, PADDLE)
+        ball   = find(grid, BALL)
+
+        if ball[1] >= paddle[1]: break
+
+        if   ball[0] == paddle[0]: joystick = STAY
+        elif ball[0] <  paddle[0]: joystick = LEFT
+        elif ball[0] >  paddle[0]: joystick = RIGHT
+        else: pass
+
+        comp.inputs.append(joystick)
+        comp.run()
+
+        points = score(comp.outputs, points)
+
+        grid = update(grid, comp.outputs)
+        plot(grid, points)
+
+        comp.outputs = []
+
+    return score(comp.outputs, points)
 
 if __name__ == '__main__':
-    intcodes = parse('input.txt')
+    intcodes = parse('inputs/day13.txt')
 
-    print('Part 1: {}'.format(part1(intcodes)))
-    print('Part 2: {}'.format(part2(intcodes)))
+    comp1 = computer('arcade', intcodes, []).run()
+    grid = update(empty(comp1.outputs), comp1.outputs)
+
+    part1 = blocks(grid)
+
+    intcodes[0] = 2
+    comp2 = computer('arcade', intcodes, [])
+
+    part2 = play(comp2)
+
+    print('Part 1: {}'.format(part1))
+    print('Part 2: {}'.format(part2))

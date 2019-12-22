@@ -38,7 +38,7 @@ def manhatten(point, x0=0, y0=0):
     return abs(point[0] - x0) + abs(point[1] - y0)
 
 if __name__ == '__main__':
-    w1, w2 = parse('input.txt')
+    w1, w2 = parse('inputs/day03.txt')
 
     path1, path2 = path(w1), path(w2)
 

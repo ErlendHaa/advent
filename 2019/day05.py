@@ -94,7 +94,7 @@ def equal(program, ip, c, b, a):
     return ip + 4
 
 if __name__ == '__main__':
-    intcodes = parse('input.txt')
+    intcodes = parse('inputs/day05.txt')
     part1 = run(list(intcodes), 1)[-1]
     part2 = run(list(intcodes), 5)[0]
 
