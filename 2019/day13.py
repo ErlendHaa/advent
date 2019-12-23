@@ -2,107 +2,13 @@ from os import system
 from sys import stdout
 from collections import deque
 
+from intcode import computer
+
 import numpy as np
 
 def parse(path):
     with open(path, mode='r') as f:
         return [int(x) for x in f.readline().split(',')]
-
-class computer:
-    def __init__(self, name, program, inputs):
-        self.name    = name
-        self.program = list(program)
-        self.ip      = 0
-        self.base    = 0
-        self.outputs = []
-        self.inputs  = deque(inputs)
-
-        ext = [0] * 1000000
-        self.program.extend(ext)
-
-    def run(self):
-        self.paused = False
-        opcode      = None
-
-        while opcode != 99 and not self.paused:
-            opcode, c, b, a = self.instruction()
-            if   opcode == 1: self.add(c, b, a)
-            elif opcode == 2: self.mul(c, b, a)
-            elif opcode == 3: self.put(c)
-            elif opcode == 4: self.get(c)
-            elif opcode == 5: self.jumpt(c, b)
-            elif opcode == 6: self.jumpf(c, b)
-            elif opcode == 7: self.less(c, b, a)
-            elif opcode == 8: self.equal(c, b, a)
-            elif opcode == 9: self.rbase(c)
-            else:
-                break
-        return self
-
-    def instruction(self):
-        opcode = self.program[self.ip] % 100
-        c = (self.program[self.ip] // 100)  % 10
-        b = (self.program[self.ip] // 1000) % 10
-        a = (self.program[self.ip] // 10000)
-
-        if opcode == 99: return opcode, c, b, a
-
-        if   c == 0: c = self.program[self.ip + 1]
-        elif c == 1: c = self.ip + 1
-        elif c == 2: c = self.program[self.ip + 1] + self.base
-
-        if   b == 0: b = self.program[self.ip + 2]
-        elif b == 1: b = self.ip + 2
-        elif b == 2: b = self.program[self.ip + 2] + self.base
-
-        if   a == 0: a = self.program[self.ip + 3]
-        elif a == 1: a = self.program[self.ip + 3]
-        elif a == 2: a = self.program[self.ip + 3] + self.base
-
-        return opcode, c, b, a
-
-    def add(self, c, b, a):
-        self.program[a] = self.program[c] + self.program[b]
-        self.ip += 4
-
-    def mul(self, c, b, a):
-        self.program[a] = self.program[c] * self.program[b]
-        self.ip += 4
-
-    def put(self, c):
-        if len(self.inputs) == 0:
-            self.paused = True
-            return
-
-        self.program[c] = self.inputs.popleft()
-        self.ip += 2
-
-    def get(self, c):
-        self.outputs.append(self.program[c])
-        self.ip += 2
-
-    def jumpt(self, c, b):
-        if self.program[c] != 0: self.ip  = self.program[b]
-        else:                    self.ip += 3
-
-    def jumpf(self, c, b):
-        if self.program[c] == 0: self.ip = self.program[b]
-        else:                    self.ip += 3
-
-    def less(self, c, b, a):
-        if self.program[c] < self.program[b]: self.program[a] = 1
-        else:                                 self.program[a] = 0
-        self.ip += 4
-
-    def equal(self, c, b, a):
-        if self.program[c] == self.program[b]: self.program[a] = 1
-        else:                                  self.program[a] = 0
-        self.ip += 4
-
-    def rbase(self, c):
-        self.base += self.program[c]
-        self.ip += 2
-
 
 EMPTY  = 0
 WALL   = 1
@@ -168,15 +74,15 @@ def plot(grid, points):
     output.append('Points: {}\n'.format(points))
     stdout.write(''.join(output))
 
-def play(comp):
+def play(com):
     joystick = STAY
-    comp.inputs.append(joystick)
-    comp.run()
+    com.update([joystick])
+    com()
 
-    grid = update(empty(comp.outputs), comp.outputs)
+    grid = update(empty(com.out), com.out)
 
-    points = score(comp.outputs, 0)
-    comp.outputs = []
+    points = score(com.out, 0)
+    com.outputs = []
     plot(grid, points)
     while blocks(grid) > 0:
         paddle = find(grid, PADDLE)
@@ -189,30 +95,31 @@ def play(comp):
         elif ball[0] >  paddle[0]: joystick = RIGHT
         else: pass
 
-        comp.inputs.append(joystick)
-        comp.run()
+        com.update([joystick])
+        com()
 
-        points = score(comp.outputs, points)
+        points = score(com.outputs, points)
 
-        grid = update(grid, comp.outputs)
+        grid = update(grid, com.outputs)
         plot(grid, points)
 
-        comp.outputs = []
+        com.outputs = []
 
-    return score(comp.outputs, points)
+    return score(com.out, points)
 
 if __name__ == '__main__':
-    intcodes = parse('inputs/day13.txt')
+    tape = parse('inputs/day13.txt')
 
-    comp1 = computer('arcade', intcodes, []).run()
-    grid = update(empty(comp1.outputs), comp1.outputs)
+    comp1 = computer('arcade', tape, [])()
+    grid = update(empty(comp1.out), comp1.out)
 
     part1 = blocks(grid)
 
-    intcodes[0] = 2
-    comp2 = computer('arcade', intcodes, [])
+    tape[0] = 2
+    comp2 = computer('arcade', tape, [])
 
     part2 = play(comp2)
 
+    system('clear')
     print('Part 1: {}'.format(part1))
     print('Part 2: {}'.format(part2))
