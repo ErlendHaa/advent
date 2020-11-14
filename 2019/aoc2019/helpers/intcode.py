@@ -125,3 +125,12 @@ class computer:
     def rbase(self, c):
         self.base += self.tape[c]
         self.ip += 2
+
+def ascii_cmd(string):
+    cmd = [ord(x) for x in string]
+    cmd.append(10) # Newline
+    return cmd
+
+def ascii_interpret(cmd):
+    return ''.join([str(chr(x)) for x in cmd])
+

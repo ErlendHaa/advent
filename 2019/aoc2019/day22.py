@@ -34,7 +34,6 @@ def deal2table(stack, n):
 
     return deque(table)
 
-
 def shuffle(deck, rules):
     for rule, n in rules:
         if   rule == TABLE: deck = deal2table(deck, n)
@@ -43,10 +42,19 @@ def shuffle(deck, rules):
 
     return deck
 
-if __name__ == '__main__':
-    rules = parse('inputs/day22.txt')
+def track(card_pos, rules):
+    for rule, n in rules:
+        if   rule == TABLE: deck = deal2table(deck, n)
+        elif rule == STACK:
+            card_pos = ncards - card_pos
+        elif rule == CUT:
+            card_pos += n
+
+
+def puzzle22(path='inputs/day22.txt'):
+    rules = parse(path)
     deck  = deque(range(10007))
     deck = shuffle(deck, rules)
 
     part1 = [i for i, card in enumerate(deck) if card == 2019][0]
-    print('Part 1: {}'.format(part1))
+    return part1, 'Not solved'

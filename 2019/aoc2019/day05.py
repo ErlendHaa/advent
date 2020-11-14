@@ -93,10 +93,8 @@ def equal(program, ip, c, b, a):
     else:      program[a] = 0
     return ip + 4
 
-if __name__ == '__main__':
-    intcodes = parse('inputs/day05.txt')
+def puzzle5(path='inputs/day05.txt'):
+    intcodes = parse(path)
     part1 = run(list(intcodes), 1)[-1]
     part2 = run(list(intcodes), 5)[0]
-
-    print('Part 1: {}'.format(part1))
-    print('Part 2: {}'.format(part2))
+    return part1, part2

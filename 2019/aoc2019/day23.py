@@ -1,6 +1,6 @@
 from collections import deque
 
-from intcode import computer
+from . import helpers
 
 def parse(path):
     with open(path, mode='r') as f:
@@ -30,9 +30,9 @@ def receiving_status(computers):
     a = [x for x in computers if len(x.inputs) > 0]
     return True if len(a) > 0 else False
 
-if __name__ == '__main__':
-    tape = parse('inputs/day23.txt')
-    computers = [computer('NIC', tape, [i]) for i in range(50)]
+def puzzle23(path='inputs/day23.txt'):
+    tape = parse(path)
+    computers = [helpers.computer('NIC', tape, [i]) for i in range(50)]
 
     nat = []
     last_restart = [None, None]
@@ -63,5 +63,4 @@ if __name__ == '__main__':
             if len(com.inputs) > 0: continue
             com.update([-1])
 
-    print('Part 1: {}'.format(nat[0][1]))
-    print('Part 2: {}'.format(restart[1]))
+    return nat[0][1], restart[1]

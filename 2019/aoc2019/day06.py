@@ -57,12 +57,11 @@ def distance(start, end):
 
     return len(p1.symmetric_difference(p2)) - 2
 
-if __name__ == '__main__':
-    pairs   = parse('inputs/day06.txt')
+def puzzle6(path='inputs/day06.txt'):
+    pairs   = parse(path)
     planets = mkuniverse(pairs)
 
     part1 = sum([p.orbits for p in planets.values()])
     part2 = distance(planets['YOU'], planets['SAN'])
 
-    print('Part 1: {}'.format(part1))
-    print('Part 2: {}'.format(part2))
+    return part1, part2

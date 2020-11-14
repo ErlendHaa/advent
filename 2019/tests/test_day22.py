@@ -2,9 +2,7 @@ import pytest
 
 from collections import deque
 
-from day22 import deal2stack
-from day22 import deal2table
-from day22 import cut
+from aoc2019.day22 import deal2stack, deal2table, cut
 
 def test_deal2stack():
     deck = deque(range(10))

@@ -6,7 +6,7 @@ def parse(data):
         wire2 = f.readline().strip('\n').split(',')
     return wire1, wire2
 
-def path(wire, x=0, y=0):
+def findpath(wire, x=0, y=0):
     points = []
     for turn in wire:
         direction = turn[0]
@@ -37,15 +37,14 @@ def path(wire, x=0, y=0):
 def manhatten(point, x0=0, y0=0):
     return abs(point[0] - x0) + abs(point[1] - y0)
 
-if __name__ == '__main__':
-    w1, w2 = parse('inputs/day03.txt')
+def puzzle3(path='inputs/day03.txt'):
+    w1, w2 = parse(path)
 
-    path1, path2 = path(w1), path(w2)
+    path1, path2 = findpath(w1), findpath(w2)
 
     intersections = set(path1.keys()).intersection(set(path2.keys()))
 
     shortest = min([manhatten(p) for p in intersections])
     fastest  = min([path1[x] + path2[x] + 2 for x in intersections])
 
-    print('Part 1: {}'.format(shortest))
-    print('Part 2: {}'.format(fastest))
+    return shortest, fastest

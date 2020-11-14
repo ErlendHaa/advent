@@ -26,7 +26,7 @@ def phases(sequence):
         sequence = newseq
     return sequence
 
-if __name__ == '__main__':
-    sequence = parse('inputs/day16.txt')
+def puzzle16(path='inputs/day16.txt'):
+    sequence = parse(path)
     part1 = phases(sequence)
-    print('Part 1: {}'.format(''.join([str(x) for x in part1[:8]])))
+    return ''.join([str(x) for x in part1[:8]]), 'Not solved'

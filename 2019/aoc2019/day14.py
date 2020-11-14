@@ -70,11 +70,11 @@ def parse(fpath):
         chem.load(chems)
     return chems
 
-if __name__ == '__main__':
-    chems = parse('inputs/day14.txt')
+def puzzle14(path='inputs/day14.txt'):
+    chems = parse(path)
 
     chems['FUEL'].get(1)
-    print('Part 1: {}'.format(chems['ORE'].used))
+    part1 = chems['ORE'].used
 
 
     cap = 1000000000000
@@ -91,7 +91,5 @@ if __name__ == '__main__':
         try: chems['FUEL'].get(1)
         except: break
 
-    print('Part 2: {}'.format(chems['FUEL'].used))
-
-
-
+    part2 = chems['FUEL'].used
+    return part1, part2

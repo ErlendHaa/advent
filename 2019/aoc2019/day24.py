@@ -29,8 +29,8 @@ def update(area):
             tmp.append(area[i])
     return tmp
 
-if __name__ == '__main__':
-    area = parse('inputs/day24.txt')
+def puzzle24(path='inputs/day24.txt'):
+    area = parse(path)
 
     layouts = set()
     cs = checksum(area)
@@ -40,4 +40,4 @@ if __name__ == '__main__':
         area = update(area)
         cs = checksum(area)
 
-    print('Part 1: {}'.format(cs))
+    return cs, 'Not solved'

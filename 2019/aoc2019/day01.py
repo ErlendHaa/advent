@@ -17,8 +17,10 @@ def totalfuel(initial_mass):
 
     return fuel
 
-if __name__ == '__main__':
-    masses = parse('inputs/day01.txt')
+def puzzle1(path='inputs/day01.txt'):
+    masses = parse(path)
 
-    print('Part 1: {}'.format(sum(map(mass2fuel, masses))))
-    print('Part 2: {}'.format(sum(map(totalfuel, masses))))
+    part1 = sum(map(mass2fuel, masses))
+    part2 = sum(map(totalfuel, masses))
+
+    return part1, part2

@@ -1,7 +1,7 @@
 import random
 import numpy as np
 
-from intcode import computer
+from . import helpers
 from collections import deque
 
 def parse(path):
@@ -132,11 +132,11 @@ def findgoal(com):
 
     return visited
 
-if __name__ == '__main__':
-    tape = parse('inputs/day15.txt')
-    com = computer('repair', tape, [1])()
+def puzzle15(path='inputs/day15.txt'):
+    tape = parse(path)
+    com = helpers.computer('repair', tape, [1])()
 
-    area = findgoal(com)
-    print(area)
-    print('Part 1: {}'.format(comp1.outputs[0]))
-    print('Part 2: {}'.format(comp2.outputs[0]))
+    return 'Not solved', 'Not solved'
+    #area = findgoal(com)
+    #print(area)
+    #return comp1.outputs[0], comp2.outputs[0]

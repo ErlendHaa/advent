@@ -146,8 +146,6 @@ def part2(tape):
 
     return 10000 * (x - 99) + y
 
-if __name__ == '__main__':
-    intcodes = parse('inputs/day19.txt')
-
-    print('Part 1: {}'.format(part1(intcodes)))
-    print('Part 2: {}'.format(part2(intcodes)))
+def puzzle19(path='inputs/day19.txt'):
+    intcodes = parse(path)
+    return part1(intcodes), part2(intcodes)

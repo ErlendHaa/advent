@@ -1,6 +1,6 @@
 import pytest
 
-from day16 import phases
+from aoc2019.day16 import phases
 
 def test_phase1():
     ref = [int(x) for x in '24176176']

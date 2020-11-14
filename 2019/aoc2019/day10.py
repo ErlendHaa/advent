@@ -43,8 +43,8 @@ def wraprad(rad, shift=-1*pi/2, start=0, end=2*pi):
     if rad < start: rad += 2*pi
     return rad
 
-if __name__ == '__main__':
-    astroides = parse('inputs/day10.txt')
+def puzzle10(path='inputs/day10.txt'):
+    astroides = parse(path)
     angles(astroides)
     station =  max(astroides, key=lambda x: len(x.space))
 
@@ -58,5 +58,4 @@ if __name__ == '__main__':
 
     part2 = ast.x * 100 + ast.y
 
-    print('Part 1: {}'.format(len(station.space)))
-    print('Part 2: {}'.format(part2))
+    return len(station.space), part2

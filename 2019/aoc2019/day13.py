@@ -2,7 +2,7 @@ from os import system
 from sys import stdout
 from collections import deque
 
-from intcode import computer
+from . import helpers
 
 import numpy as np
 
@@ -107,19 +107,18 @@ def play(com):
 
     return score(com.out, points)
 
-if __name__ == '__main__':
-    tape = parse('inputs/day13.txt')
+def puzzle13(path='inputs/day13.txt'):
+    tape = parse(path)
 
-    comp1 = computer('arcade', tape, [])()
+    comp1 = helpers.computer('arcade', tape, [])()
     grid = update(empty(comp1.out), comp1.out)
 
     part1 = blocks(grid)
 
     tape[0] = 2
-    comp2 = computer('arcade', tape, [])
+    comp2 = helpers.computer('arcade', tape, [])
 
     part2 = play(comp2)
 
     system('clear')
-    print('Part 1: {}'.format(part1))
-    print('Part 2: {}'.format(part2))
+    return part1, part2

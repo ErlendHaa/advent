@@ -69,17 +69,15 @@ def equals(x, y, z):
 
     return ref
 
-if __name__ == '__main__':
-    positions = parse('inputs/day12.txt')
+def puzzle12(path='inputs/day12.txt'):
+    positions = parse(path)
     moons = [SpaceObject(list(pos)) for pos in positions]
 
     moons = fast_forward(moons, 1000)
     part1 = sum(list(map(energy, moons)))
 
-    print('Part 1: {}'.format(part1))
-
     moons = [SpaceObject(list(pos)) for pos in positions]
     x, y, z = orbits(moons)
     part2 = equals(x,y,z)
 
-    print('Part 2: {}'.format(part2))
+    return part1, part2

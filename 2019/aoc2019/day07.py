@@ -132,8 +132,7 @@ def part2(program, init=0):
 
     return max(outputs)
 
-if __name__ == '__main__':
-    program = parse('inputs/day07.txt')
+def puzzle7(path='inputs/day07.txt'):
+    program = parse(path)
 
-    print('Part 1: {}'.format(part1(program)))
-    print('Part 2: {}'.format(part2(program)))
+    return part1(program), part2(program)

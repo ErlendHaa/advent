@@ -38,9 +38,8 @@ def part2(intcodes):
         if run(list(intcodes), noun, verb)[0] != 19690720: continue
         return (100 * noun) + verb;
 
-if __name__ == '__main__':
-    intcodes = parse('inputs/day02.txt')
+def puzzle2(path='inputs/day02.txt'):
+    intcodes = parse(path)
 
-    part1 = run(list(intcodes), noun=12, verb=2)
-    print('Part 1: {}'.format(part1[0]))
-    print('Part 2: {}'.format(part2(intcodes)))
+    part1 = run(list(intcodes), noun=12, verb=2)[0]
+    return part1, part2(intcodes)

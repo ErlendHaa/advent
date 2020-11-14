@@ -20,7 +20,6 @@ def criteria2(password):
     if 2 not in [len(list(group)) for _, group in groupby(password)]: return False
     return True
 
-if __name__ == '__main__':
+def puzzle4(path=None):
     part1, part2 = validate(128392, 643281)
-    print('Part 1: {}'.format(part1))
-    print('Part 2: {}'.format(part2))
+    return part1, part2

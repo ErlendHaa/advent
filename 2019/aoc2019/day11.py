@@ -3,7 +3,7 @@ from collections import defaultdict
 from os import system
 from time import sleep
 
-from intcode import computer
+from . import helpers
 
 import numpy as np
 
@@ -71,15 +71,14 @@ def paint(com, start_on=BLACK):
 
     return len(painted), area
 
-if __name__ == '__main__':
-    intcodes = parse('inputs/day11.txt')
-    com = computer('painter', intcodes, [])
+def puzzle11(path='inputs/day11.txt'):
+    intcodes = parse(path)
+    com = helpers.computer('painter', intcodes, [])
 
     painted, _ = paint(com)
 
-    com = computer('painter', intcodes, [])
+    com = helpers.computer('painter', intcodes, [])
     _, area = paint(com, start_on=WHITE)
 
-    print('Part 1: {}'.format(painted))
-    print('Part 2:')
     draw(area)
+    return painted, 'see plot'

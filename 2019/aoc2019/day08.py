@@ -49,10 +49,8 @@ def part2(layers):
     plt.imshow(image)
     plt.show()
 
-if __name__ == '__main__':
-    layers = parse('inputs/day08.txt')
-
-    print('Part 1: {}'.format(part1(layers)))
-    print('Part 2: see plot')
+def puzzle8(path='inputs/day08.txt'):
+    layers = parse(path)
 
     part2(layers)
+    return part1(layers), 'see plot'
