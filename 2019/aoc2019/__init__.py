@@ -29,3 +29,4 @@ from .day19 import puzzle19
 from .day22 import puzzle22
 from .day23 import puzzle23
 from .day24 import puzzle24
+from .day25 import puzzle25
