@@ -7,3 +7,4 @@ from .day06 import puzzle6
 from .day07 import puzzle7
 from .day08 import puzzle8
 from .day09 import puzzle9
+from .day10 import puzzle10
