@@ -8,3 +8,4 @@ from .day07 import puzzle7
 from .day08 import puzzle8
 from .day09 import puzzle9
 from .day10 import puzzle10
+from .day11 import puzzle11
