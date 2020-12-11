@@ -2,20 +2,21 @@ import collections
 
 import numpy as np
 
-free  = 'L'
-taken = '#'
-floor = '.'
+free  = 1
+taken = 2
+floor = 3
 
 def parse(path):
     with open(path) as f:
         grid = np.array([[c for c in line.strip('\n')] for line in f.readlines()])
+        grid_int = np.zeros(shape=grid.shape)
         for x in range(grid.shape[0]):
             for y in range(grid.shape[1]):
-                if grid[x, y] == 'L': grid[x,y] = free
-                if grid[x, y] == '#': grid[x,y] = taken
-                if grid[x, y] == '.': grid[x,y] = floor
+                if grid[x, y] == 'L': grid_int[x, y] = free
+                if grid[x, y] == '#': grid_int[x, y] = taken
+                if grid[x, y] == '.': grid_int[x, y] = floor
 
-        return grid
+        return grid_int
 
 def nadjacent_v1(grid, xinit, yinit):
     occupied = 0
