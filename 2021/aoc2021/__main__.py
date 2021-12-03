@@ -3,6 +3,7 @@ import argparse
 
 from .day1 import *
 from .day2 import *
+from .day3 import *
 
 def print_solution(day, part, solution):
     print(f'Solution to day {day}, part {part}: {solution}')
