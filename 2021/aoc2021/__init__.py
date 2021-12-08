@@ -5,3 +5,4 @@ from .day4 import day4_part1, day4_part2
 from .day5 import day5_part1, day5_part2
 from .day6 import day6_part1, day6_part2
 from .day7 import day7_part1, day7_part2
+from .day8 import day8_part1, day8_part2
