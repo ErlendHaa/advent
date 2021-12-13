@@ -12,6 +12,7 @@ from .day8  import *
 from .day9  import *
 from .day10 import *
 from .day11 import *
+from .day12 import *
 
 def print_solution(day, part, solution):
     print(f'Solution to day {day}, part {part}: {solution}')
