@@ -13,3 +13,4 @@ from .day12 import day12_part1, day12_part2
 from .day13 import day13_part1, day13_part2
 from .day14 import day14_part1, day14_part2
 from .day15 import day15_part1, day15_part2
+from .day16 import day16_part1, day16_part2
